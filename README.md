@@ -49,20 +49,43 @@
 
 ### 📥 1단계: 프로젝트 다운로드
 
+**방법 1: Git 사용**
 ```bash
 git clone https://github.com/Ftoaster/PARAGEM.git
 cd PARAGEM
 ```
 
+**방법 2: GitHub에서 직접 다운로드** (Git 없이)
+1. https://github.com/Ftoaster/PARAGEM 페이지 방문
+2. 초록색 "Code" 버튼 클릭 → "Download ZIP" 선택
+3. 다운로드한 ZIP 파일을 압축 해제
+
 ---
 
-### 🚀 2단계: 실행
+### ⚙️ 2단계: 설정 파일 수정
+
+`translator_config.json` 파일을 열어서 **프로젝트 ID**를 수정하세요:
+
+```json
+{
+  "paratranz": {
+    "project_id": 16593  // 👈 여기에 본인의 Paratranz 프로젝트 ID 입력
+  }
+}
+```
+
+> **💡 프로젝트 ID 찾는 방법:**  
+> Paratranz 프로젝트 페이지 URL에서 확인할 수 있어요.  
+> 예: `https://paratranz.cn/projects/16593` → ID는 `16593`
+
+---
+
+### 🚀 3단계: 실행
 
 ```cmd
 run_web_translator.bat
 ```
 
-- 설정 파일이 없으면 자동으로 생성됩니다
 - 필요한 패키지를 자동으로 설치합니다
 - 브라우저가 자동으로 `http://localhost:5000`을 엽니다
 
