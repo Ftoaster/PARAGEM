@@ -1,0 +1,54 @@
+# 사용자별 설정 파일 (project_id 등이 다를 수 있음)
+translator_config.json
+paratranz_glossary.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 로그/임시파일
+*.log
+*.tmp
+
+# 빌드 결과
+dist/
+build/
+*.spec
+
+# ngrok
+ngrok.exe
+ngrok.yml
+
+# 기타 프로젝트 파일
+*.dds
+*.tga
+*.pssg
+*.ttf
+*.png
+*.csv
+*.xml
+b_fonts_jpn.pssg_textures/
+extracted/
+output/
+test_output/
+test_output_mtsdf/
+separated_libraries_raw/
+EFR/
+

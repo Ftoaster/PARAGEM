@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌐 Paratranz 번역기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 20px;
+        }
+        
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                padding: 15px;
+                border-radius: 12px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em !important;
+            }
+            
+            .button-wrapper {
+                min-width: 80px !important;
+            }
+            
+            .button-wrapper kbd {
+                font-size: 0.7em !important;
+                padding: 1px 4px !important;
+            }
+            
+            button {
+                padding: 10px 12px !important;
+                font-size: 0.85em !important;
+            }
+            
+            .original-text, .translation-option {
+                font-size: 0.9em;
+                padding: 10px;
+            }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            background: #f0f0f0;
+            border-radius: 8px;
+            height: 24px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-box .label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-box .value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        
+        .original-text {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .context-text {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .translation-option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .translation-option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .translation-option.selected {
+            border-color: #667eea;
+            background: #e8f0ff;
+        }
+        
+        .translation-option .number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .button-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .button-wrapper kbd {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #5568d3;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover:not(:disabled) {
+            background: #218838;
+        }
+        
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .btn-warning:hover:not(:disabled) {
+            background: #e68900;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: #5a6268;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover:not(:disabled) {
+            background: #c82333;
+        }
+        
+        .edit-area {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+        
+        .edit-area:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .file-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .file-item:hover {
+            background: #e8f0ff;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-bottom: 15px;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        /* 토스트 알림 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            font-size: 1em;
+            font-weight: bold;
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .toast.error {
+            background: #f44336;
+        }
+        
+        .toast.warning {
+            background: #ff9800;
+        }
+        
+        .toast.info {
+            background: #2196f3;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        
+        .spinner {
+            border: 4px solid #f0f0f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        #loadingText {
+            font-size: 1em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1>🌐 Paratranz 번역기</h1>
+            <p>Gemini API 기반 게임 번역 도구</p>
+        </div>
+        
+        
+        <!-- 진행률 -->
+        <div id="progressSection" class="hidden">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%">0%</div>
+            </div>
+        </div>
+        
+        <!-- 통계 -->
+        <div id="statsSection" class="stats hidden">
+            <div class="stat-box">
+                <div class="label">📊 진행</div>
+                <div class="value" id="statProgress">0/0</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">✅ 완료</div>
+                <div class="value" id="statTranslated">0</div>
+            </div>
+        </div>
+        
+        <!-- 메인 콘텐츠 -->
+        <div id="startSection">
+            <!-- API 키 설정 -->
+            <div id="apiKeySection" class="section">
+                <div class="section-title">🔑 API 키 설정</div>
+                <p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">
+                    처음 한 번만 입력하면 브라우저에 저장됩니다.
+                </p>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">
+                        Paratranz API 키:
+                    </label>
+                    <input type="password" id="paratranzApiKey" class="edit-area" 
+                           style="min-height: auto; height: 40px;" 
+                           placeholder="여기에 Paratranz API 키 입력">
+                    <small style="color: #666;">
+                        <a href="https://paratranz.cn/users/my" target="_blank">여기서 발급</a>
+                    </small>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">
+                        Gemini API 키:
+                    </label>
+                    <input type="password" id="geminiApiKey" class="edit-area" 
+                           style="min-height: auto; height: 40px;" 
+                           placeholder="여기에 Gemini API 키 입력">
+                    <small style="color: #666;">
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank">여기서 발급</a>
+                    </small>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">
+                        Gemini 모델:
+                    </label>
+                    <select id="geminiModel" class="edit-area" style="min-height: auto; height: 50px; cursor: pointer; padding: 10px; font-size: 0.95em;">
+                        <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite (1500/day, 빠름, 저비용)</option>
+                        <option value="gemini-2.5-flash">gemini-2.5-flash (1500/day, 빠름, 품질 중간)</option>
+                        <option value="gemini-2.5-pro">gemini-2.5-pro (50/day, 느림, 최고 품질)</option>
+                    </select>
+                    <small style="color: #666;">
+                        모델별 일일 한도와 품질이 다릅니다
+                    </small>
+                </div>
+                <button class="btn-success" onclick="saveApiKeys()">💾 저장하고 시작</button>
+            </div>
+            
+            <!-- 파일 선택 (API 키 입력 후 표시) -->
+            <div id="fileSection" class="section hidden">
+                <div class="section-title">📁 파일 선택</div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn-primary" onclick="loadFiles()">파일 목록 불러오기</button>
+                    <button class="btn-secondary" onclick="showApiKeySection()">🔑 API 키 변경</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="translationSection" class="hidden">
+            <!-- 원문 -->
+            <div class="section">
+                <div class="section-title">📝 원문</div>
+                <div id="originalText" class="original-text"></div>
+                <div id="contextText" class="context-text hidden"></div>
+            </div>
+            
+            <!-- 번역 -->
+            <div class="section">
+                <div class="section-title">🤖 AI 번역 (2가지)</div>
+                <div id="translation1" class="translation-option" onclick="selectTranslation(1)">
+                    <span class="number">1</span>
+                    <span class="text"></span>
+                </div>
+                <div id="translation2" class="translation-option" onclick="selectTranslation(2)">
+                    <span class="number">2</span>
+                    <span class="text"></span>
+                </div>
+            </div>
+            
+            <!-- 편집 영역 (숨김) -->
+            <div id="editSection" class="section hidden">
+                <div class="section-title">✏️ 번역 편집</div>
+                <textarea id="editArea" class="edit-area" placeholder="번역을 수정하세요..."></textarea>
+            </div>
+            
+            <!-- 액션 버튼 -->
+            <div id="actionButtons" class="button-group">
+                <div class="button-wrapper">
+                    <kbd>1</kbd>
+                    <button class="btn-primary" onclick="selectAction(1)">📝 첫 번째</button>
+                </div>
+                <div class="button-wrapper">
+                    <kbd>2</kbd>
+                    <button class="btn-primary" onclick="selectAction(2)">📝 두 번째</button>
+                </div>
+                <div class="button-wrapper">
+                    <kbd>3</kbd>
+                    <button class="btn-secondary" onclick="selectAction(3)">📚 용어집</button>
+                </div>
+                <div class="button-wrapper">
+                    <kbd>4</kbd>
+                    <button class="btn-secondary" onclick="selectAction(4)">⏭️ 건너뛰기</button>
+                </div>
+            </div>
+            
+            <!-- 저장 버튼 (숨김) -->
+            <div id="saveButtons" class="button-group hidden">
+                <div class="button-wrapper">
+                    <kbd>1</kbd>
+                    <button class="btn-success" onclick="saveAction(1)">💾 저장</button>
+                </div>
+                <div class="button-wrapper">
+                    <kbd>2</kbd>
+                    <button class="btn-warning" onclick="saveAction(2)">📝 검토</button>
+                </div>
+                <div id="editButtonWrapper" class="button-wrapper">
+                    <kbd>3</kbd>
+                    <button class="btn-warning" onclick="saveAction(3)">✏️ 편집</button>
+                </div>
+                <div id="cancelButtonWrapper" class="button-wrapper">
+                    <kbd id="cancelKbd">4</kbd>
+                    <button class="btn-secondary" onclick="saveAction(4)">❌ 취소</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 로딩 -->
+        <div id="loadingSection" class="loading hidden">
+            <div class="spinner"></div>
+            <div id="loadingText">처리 중...</div>
+        </div>
+        
+    </div>
+    
+    <!-- 파일 선택 모달 -->
+    <div id="fileModal" class="modal">
+        <div class="modal-content">
+            <div class="section-title">📁 파일 선택</div>
+            <select id="fileSelect" size="10" style="height: 300px;"></select>
+            <div style="margin-top: 15px;">
+                <div class="section-title">📊 번역 단계 선택</div>
+                <select id="stageSelect">
+                    <option value="0">미번역</option>
+                    <option value="1">번역됨</option>
+                    <option value="5">검토됨</option>
+                </select>
+            </div>
+            <div class="button-group" style="margin-top: 15px;">
+                <button class="btn-primary" onclick="startTranslation()">시작</button>
+                <button class="btn-secondary" onclick="closeModal()">취소</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 용어집 모달 -->
+    <div id="glossaryModal" class="modal">
+        <div class="modal-content">
+            <div class="section-title">📚 용어집 관리</div>
+            <div id="glossaryList" style="max-height: 400px; overflow-y: auto; margin-bottom: 15px;"></div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="addGlossaryTerm()">추가</button>
+                <button class="btn-secondary" onclick="closeGlossaryModal()">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedTranslation = null;
+        let currentData = null;
+        let selectedFileId = null;
+        let selectedStage = null;
+        let userApiKeys = {
+            paratranz: '',
+            gemini: '',
+            model: 'gemini-2.5-flash-lite'
+        };
+        let sessionId = null;  // 🔒 세션 ID (잠금용)
+        
+        // 페이지 로드 시 저장된 API 키 확인 + 세션 ID 생성
+        window.addEventListener('DOMContentLoaded', async () => {
+            // 🔒 세션 ID 생성
+            try {
+                const response = await fetch('/api/session');
+                const data = await response.json();
+                sessionId = data.session_id;
+                console.log('🔒 세션 ID:', sessionId.substring(0, 8) + '...');
+            } catch (e) {
+                console.error('세션 ID 생성 실패:', e);
+                sessionId = 'fallback-' + Date.now();
+            }
+            
+            loadSavedApiKeys();
+        });
+        
+        // 토스트 알림 표시 함수
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // 3초 후 제거
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+        
+        // 저장된 API 키 불러오기
+        function loadSavedApiKeys() {
+            const paratranzKey = localStorage.getItem('paratranz_api_key');
+            const geminiKey = localStorage.getItem('gemini_api_key');
+            const geminiModel = localStorage.getItem('gemini_model') || 'gemini-2.5-flash-lite';
+            
+            if (paratranzKey && geminiKey) {
+                userApiKeys.paratranz = paratranzKey;
+                userApiKeys.gemini = geminiKey;
+                userApiKeys.model = geminiModel;
+                
+                // API 키가 있으면 파일 선택 화면으로
+                document.getElementById('apiKeySection').classList.add('hidden');
+                document.getElementById('fileSection').classList.remove('hidden');
+            } else {
+                // API 키가 없으면 입력 화면 표시
+                document.getElementById('apiKeySection').classList.remove('hidden');
+                document.getElementById('fileSection').classList.add('hidden');
+            }
+        }
+        
+        // API 헤더 생성 (모든 API 호출에 사용)
+        function getApiHeaders(additionalHeaders = {}) {
+            return {
+                'X-Paratranz-Key': userApiKeys.paratranz,
+                'X-Gemini-Key': userApiKeys.gemini,
+                'X-Gemini-Model': userApiKeys.model,
+                'X-Session-ID': sessionId,  // 🔒 잠금용 세션 ID
+                ...additionalHeaders
+            };
+        }
+        
+        // API 키 저장
+        function saveApiKeys() {
+            const paratranzKey = document.getElementById('paratranzApiKey').value.trim();
+            const geminiKey = document.getElementById('geminiApiKey').value.trim();
+            const geminiModel = document.getElementById('geminiModel').value;
+            
+            if (!paratranzKey || !geminiKey) {
+                showToast('모든 API 키를 입력해주세요!', 'error');
+                return;
+            }
+            
+            // localStorage에 저장
+            localStorage.setItem('paratranz_api_key', paratranzKey);
+            localStorage.setItem('gemini_api_key', geminiKey);
+            localStorage.setItem('gemini_model', geminiModel);
+            
+            userApiKeys.paratranz = paratranzKey;
+            userApiKeys.gemini = geminiKey;
+            userApiKeys.model = geminiModel;
+            
+            // 파일 선택 화면으로 전환
+            document.getElementById('apiKeySection').classList.add('hidden');
+            document.getElementById('fileSection').classList.remove('hidden');
+            
+            showToast('✅ API 키가 저장되었습니다!', 'success');
+        }
+        
+        // API 키 설정 화면 다시 보기
+        function showApiKeySection() {
+            document.getElementById('fileSection').classList.add('hidden');
+            document.getElementById('apiKeySection').classList.remove('hidden');
+            
+            // 현재 저장된 키 표시
+            const paratranzKey = localStorage.getItem('paratranz_api_key');
+            const geminiKey = localStorage.getItem('gemini_api_key');
+            const geminiModel = localStorage.getItem('gemini_model') || 'gemini-2.5-flash-lite';
+            
+            if (paratranzKey) {
+                document.getElementById('paratranzApiKey').value = paratranzKey;
+            }
+            if (geminiKey) {
+                document.getElementById('geminiApiKey').value = geminiKey;
+            }
+            document.getElementById('geminiModel').value = geminiModel;
+        }
+        
+        // 키보드 이벤트
+        document.addEventListener('keydown', (e) => {
+            // 입력 중이면 무시
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                return;
+            }
+            
+            const key = e.key;
+            
+            // 번역 화면
+            if (!document.getElementById('translationSection').classList.contains('hidden')) {
+                // 저장 버튼이 보이면
+                if (!document.getElementById('saveButtons').classList.contains('hidden')) {
+                    // 편집 모드인지 확인
+                    const isEditMode = !document.getElementById('editSection').classList.contains('hidden');
+                    
+                    if (isEditMode) {
+                        // 편집 모드: 1(저장), 2(검토), 3(취소)
+                        if (key === '1') saveAction(1);
+                        else if (key === '2') saveAction(2);
+                        else if (key === '3') saveAction(4); // 3번 키 = 취소
+                    } else {
+                        // 일반 모드: 1(저장), 2(검토), 3(편집), 4(취소)
+                        if (key >= '1' && key <= '4') {
+                            saveAction(parseInt(key));
+                        }
+                    }
+                }
+                // 액션 버튼이 보이면
+                else if (!document.getElementById('actionButtons').classList.contains('hidden')) {
+                    if (key >= '1' && key <= '4') {
+                        selectAction(parseInt(key));
+                    }
+                }
+            }
+        });
+        
+        // 파일 목록 불러오기
+        async function loadFiles() {
+            showLoading('파일 목록 불러오는 중...');
+            
+            try {
+                const response = await fetch('/api/files', {
+                    headers: getApiHeaders()
+                });
+                const data = await response.json();
+                
+                hideLoading();
+                
+                if (data.success) {
+                    const select = document.getElementById('fileSelect');
+                    select.innerHTML = '';
+                    
+                    data.files.forEach(file => {
+                        const option = document.createElement('option');
+                        option.value = file.id;
+                        option.textContent = `${file.name} (${file.translated}/${file.total})`;
+                        select.appendChild(option);
+                    });
+                    
+                    document.getElementById('fileModal').classList.add('show');
+                } else {
+                    alert('파일 목록을 불러오지 못했습니다: ' + data.error);
+                }
+            } catch (error) {
+                hideLoading();
+                alert('오류: ' + error.message);
+            }
+        }
+        
+        // 번역 시작
+        async function startTranslation() {
+            const select = document.getElementById('fileSelect');
+            const stageSelect = document.getElementById('stageSelect');
+            
+            if (!select.value) {
+                alert('파일을 선택하세요');
+                return;
+            }
+            
+            selectedFileId = parseInt(select.value);
+            selectedStage = parseInt(stageSelect.value);
+            
+            closeModal();
+            showLoading('번역 준비 중...');
+            
+            try {
+                const response = await fetch('/api/start', {
+                    method: 'POST',
+                    headers: getApiHeaders({'Content-Type': 'application/json'}),
+                    body: JSON.stringify({
+                        file_id: selectedFileId,
+                        stage: selectedStage
+                    })
+                });
+                
+                const data = await response.json();
+                hideLoading();
+                
+                if (data.success) {
+                    if (data.completed) {
+                        alert('🎉 모든 번역 완료!\n\n다른 파일을 선택하려면 새로고침(F5)하세요.');
+                    } else {
+                        loadCurrentItem();
+                    }
+                } else {
+                    alert('오류: ' + data.error);
+                }
+            } catch (error) {
+                hideLoading();
+                alert('오류: ' + error.message);
+            }
+        }
+        
+        // 현재 항목 불러오기
+        async function loadCurrentItem() {
+            try {
+                const response = await fetch('/api/current', {
+                    headers: getApiHeaders()
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.completed) {
+                        alert('🎉 모든 번역 완료!\n\n다른 파일을 선택하려면 새로고침(F5)하세요.');
+                        return;
+                    }
+                    
+                    currentData = data.data;
+                    updateUI(currentData);
+                } else {
+                    alert('오류: ' + data.error);
+                }
+            } catch (error) {
+                alert('오류: ' + error.message);
+            }
+        }
+        
+        // UI 업데이트
+        function updateUI(data) {
+            document.getElementById('startSection').classList.add('hidden');
+            document.getElementById('translationSection').classList.remove('hidden');
+            document.getElementById('progressSection').classList.remove('hidden');
+            document.getElementById('statsSection').classList.remove('hidden');
+            
+            // 원문
+            document.getElementById('originalText').textContent = data.original;
+            
+            // 컨텍스트
+            if (data.context) {
+                document.getElementById('contextText').textContent = '💡 ' + data.context;
+                document.getElementById('contextText').classList.remove('hidden');
+            } else {
+                document.getElementById('contextText').classList.add('hidden');
+            }
+            
+            // 번역
+            document.getElementById('translation1').querySelector('.text').textContent = data.translations[0];
+            document.getElementById('translation2').querySelector('.text').textContent = data.translations[1];
+            
+            // 통계
+            const progress = Math.min(100, (data.current / data.total * 100)).toFixed(1);
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressFill').textContent = progress + '%';
+            
+            // current가 total을 넘지 않도록 표시
+            const displayCurrent = Math.min(data.current, data.total);
+            document.getElementById('statProgress').textContent = `${displayCurrent}/${data.total}`;
+            document.getElementById('statTranslated').textContent = data.translation_count;
+            
+            // 초기화
+            selectedTranslation = null;
+            document.getElementById('translation1').classList.remove('selected');
+            document.getElementById('translation2').classList.remove('selected');
+            document.getElementById('editSection').classList.add('hidden');
+            document.getElementById('actionButtons').classList.remove('hidden');
+            document.getElementById('saveButtons').classList.add('hidden');
+            
+            // 편집 버튼 복원
+            document.getElementById('editButtonWrapper').classList.remove('hidden');
+            document.getElementById('cancelKbd').textContent = '4';
+        }
+        
+        // 번역 선택 (클릭)
+        function selectTranslation(num) {
+            selectedTranslation = num;
+            document.getElementById('translation1').classList.remove('selected');
+            document.getElementById('translation2').classList.remove('selected');
+            document.getElementById(`translation${num}`).classList.add('selected');
+        }
+        
+        // 액션 선택
+        async function selectAction(action) {
+            if (action === 1 || action === 2) {
+                // 번역 선택 → 저장 단계로 (저장 단계에서도 편집 가능!)
+                selectedTranslation = action;
+                document.getElementById('translation1').classList.remove('selected');
+                document.getElementById('translation2').classList.remove('selected');
+                document.getElementById(`translation${action}`).classList.add('selected');
+                
+                // 저장 단계로 전환
+                document.getElementById('actionButtons').classList.add('hidden');
+                document.getElementById('saveButtons').classList.remove('hidden');
+                
+            } else if (action === 3) {
+                // 용어집
+                showGlossary();
+                
+            } else if (action === 4) {
+                // 건너뛰기
+                showLoading('건너뛰는 중...');
+                
+                try {
+                    const response = await fetch('/api/select', {
+                        method: 'POST',
+                        headers: getApiHeaders({'Content-Type': 'application/json'}),
+                        body: JSON.stringify({choice: 5})
+                    });
+                    
+                    const data = await response.json();
+                    hideLoading();
+                    
+                    if (data.success) {
+                        loadCurrentItem();
+                    }
+                } catch (error) {
+                    hideLoading();
+                    alert('오류: ' + error.message);
+                }
+            }
+        }
+        
+        // 저장 액션
+        async function saveAction(action) {
+            if (action === 3) {
+                // 편집
+                if (!selectedTranslation) {
+                    alert('먼저 번역을 선택하세요');
+                    return;
+                }
+                
+                const selectedText = currentData.translations[selectedTranslation - 1];
+                document.getElementById('editArea').value = selectedText;
+                document.getElementById('editSection').classList.remove('hidden');
+                
+                // 편집 버튼 숨기고 취소 버튼 번호를 3으로 변경
+                document.getElementById('editButtonWrapper').classList.add('hidden');
+                document.getElementById('cancelKbd').textContent = '3';
+                return;
+            }
+            
+            if (action === 4) {
+                // 취소
+                document.getElementById('editSection').classList.add('hidden');
+                document.getElementById('actionButtons').classList.remove('hidden');
+                document.getElementById('saveButtons').classList.add('hidden');
+                selectedTranslation = null;
+                document.getElementById('translation1').classList.remove('selected');
+                document.getElementById('translation2').classList.remove('selected');
+                
+                // 편집 버튼 다시 보이게 하고 취소 버튼 번호를 4로 복원
+                document.getElementById('editButtonWrapper').classList.remove('hidden');
+                document.getElementById('cancelKbd').textContent = '4';
+                return;
+            }
+            
+            let translation;
+            
+            // 편집 모드인 경우
+            if (!document.getElementById('editSection').classList.contains('hidden')) {
+                translation = document.getElementById('editArea').value;
+            } else {
+                if (!selectedTranslation) {
+                    alert('번역을 선택하세요');
+                    return;
+                }
+                translation = currentData.translations[selectedTranslation - 1];
+            }
+            
+            showLoading('저장 중...');
+            
+            try {
+                const response = await fetch('/api/save', {
+                    method: 'POST',
+                    headers: getApiHeaders({'Content-Type': 'application/json'}),
+                    body: JSON.stringify({
+                        translation: translation,
+                        save_type: action
+                    })
+                });
+                
+                const data = await response.json();
+                hideLoading();
+                
+                if (data.success) {
+                    if (data.completed) {
+                        alert('🎉 모든 번역 완료!\n\n다른 파일을 선택하려면 새로고침(F5)하세요.');
+                    } else {
+                        loadCurrentItem();
+                    }
+                } else {
+                    alert('저장 실패: ' + data.error);
+                }
+            } catch (error) {
+                hideLoading();
+                alert('오류: ' + error.message);
+            }
+        }
+        
+        // 용어집 표시
+        async function showGlossary() {
+            try {
+                const response = await fetch('/api/glossary', {
+                    headers: getApiHeaders()
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const list = document.getElementById('glossaryList');
+                    list.innerHTML = '';
+                    
+                    for (const [en, ko] of Object.entries(data.glossary)) {
+                        const item = document.createElement('div');
+                        item.className = 'file-item';
+                        item.innerHTML = `<strong>${en}</strong> → ${ko}`;
+                        list.appendChild(item);
+                    }
+                    
+                    document.getElementById('glossaryModal').classList.add('show');
+                }
+            } catch (error) {
+                alert('오류: ' + error.message);
+            }
+        }
+        
+        // 용어집 추가
+        function addGlossaryTerm() {
+            const en = prompt('영어 단어:');
+            if (!en) return;
+            
+            const ko = prompt('한국어 번역:');
+            if (!ko) return;
+            
+            fetch('/api/glossary', {
+                method: 'POST',
+                headers: getApiHeaders({'Content-Type': 'application/json'}),
+                body: JSON.stringify({
+                    action: 'add',
+                    en: en,
+                    ko: ko
+                })
+            }).then(() => {
+                showGlossary();
+            });
+        }
+        
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('fileModal').classList.remove('show');
+        }
+        
+        function closeGlossaryModal() {
+            document.getElementById('glossaryModal').classList.remove('show');
+        }
+        
+        // 로딩 표시
+        function showLoading(text) {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingSection').classList.remove('hidden');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingSection').classList.add('hidden');
+        }
+        
+    </script>
+</body>
+</html>
+

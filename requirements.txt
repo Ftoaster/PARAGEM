@@ -1,0 +1,5 @@
+flask>=3.0.0
+requests>=2.31.0
+google-generativeai>=0.3.0
+colorama>=0.4.6
+pyngrok>=7.0.0
