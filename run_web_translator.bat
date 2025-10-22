@@ -12,7 +12,7 @@ echo Paratranz Web Translator
 echo ============================================
 echo.
 
-REM 필요한 패키지 자동 설치
+REM Install required packages
 echo [1/2] Installing packages...
 pip install -q flask requests google-generativeai colorama pyngrok
 if %errorlevel% neq 0 (
@@ -22,7 +22,7 @@ if %errorlevel% neq 0 (
 )
 echo      Packages installed successfully!
 
-REM 서버 실행
+REM Start server
 echo [2/2] Starting server...
 echo.
 echo ============================================

@@ -6,6 +6,11 @@
     "_note": "API 키는 웹 UI에서 입력하세요"
   },
   
+  "gemini": {
+    "model": "gemini-2.5-flash-lite",
+    "_note": "API 키는 웹 UI에서 입력하세요"
+  },
+  
   "translation": {
     "source_lang": "영어",
     "target_lang": "한국어",
