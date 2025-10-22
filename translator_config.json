@@ -1,0 +1,40 @@
+{
+  "_comment": "=== Paratranz 배치 번역기 설정 파일 ===",
+  
+  "paratranz": {
+    "project_id": 16593,
+    "_note": "API 키는 웹 UI에서 입력하세요"
+  },
+  
+  "gemini": {
+    "model": "gemini-2.5-flash-lite",
+    "_note": "API 키는 웹 UI에서 입력하세요",
+    "_models": "gemini-2.5-flash-lite (1500/day), gemini-2.5-pro (50/day)"
+  },
+  
+  "translation": {
+    "source_lang": "영어",
+    "target_lang": "한국어",
+    "batch_size": 20,
+    "game_genre": "랠리 게임",
+    "tone": "전문적이고 명확",
+    "formality": "존댓말",
+    "target_audience": "10대 ~ 40대"
+  },
+  
+  "glossary": {
+    "HUD": "HUD",
+    "Saturation": "세추레이션",
+    "Deadzone": "데드존",
+    "Brake": "브레이크",
+    "Steering": "스티어링",
+    "Pass": "패스",
+    "Creek": "크릭",
+    "Mountain": "마운틴",
+    "Forward": "포워드",
+    "Reverse": "리버스",
+    "Sprint": "스프린트",
+    "Burst": "버스트"
+  }
+}
+

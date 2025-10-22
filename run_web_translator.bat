@@ -11,13 +11,22 @@ echo ============================================
 echo Paratranz Web Translator
 echo ============================================
 echo.
-echo Installing packages...
-pip install -q flask requests google-generativeai colorama pyngrok
 
+REM 필요한 패키지 자동 설치
+echo [1/2] Installing packages...
+pip install -q flask requests google-generativeai colorama pyngrok
+if %errorlevel% neq 0 (
+    echo      Failed to install packages
+    pause
+    exit /b 1
+)
+echo      Packages installed successfully!
+
+REM 서버 실행
+echo [2/2] Starting server...
 echo.
-echo Starting server...
+echo ============================================
 echo Browser will open automatically
-echo.
 echo To stop: Press Ctrl+C
 echo ============================================
 echo.
@@ -25,4 +34,3 @@ echo.
 python web_translator.py
 
 pause
-

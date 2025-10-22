@@ -1,5 +1,4 @@
-# 사용자별 설정 파일 (project_id 등이 다를 수 있음)
-translator_config.json
+# 사용자별 용어집
 paratranz_glossary.json
 
 # Python
